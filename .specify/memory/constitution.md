@@ -1,50 +1,54 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report
+Version change: placeholder → 1.0.0
+Modified principles: initial constitution (no prior named principles)
+Added sections: Core Principles, Additional Constraints, Development Workflow, Governance
+Removed sections: none
+Deferred items: none
+-->
+
+# ContosoDashboard Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Training-First Security and Ethics
+This project exists for learning and demonstration. All implementation, data, and authentication choices MUST prioritize safe, understandable training scenarios over production assumptions. Features that imply real-world security or deployment MUST be clearly labeled as training-only and MUST NOT be treated as production guidance.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. User-Value and Business Clarity
+Every feature MUST map to a concrete user workflow or training objective. We deliver work that helps teams manage tasks, coordinate projects, and understand access boundaries. Unclear or speculative abstractions are not accepted without a clear user need.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. Test-First Quality
+New logic and policy changes MUST be validated by executable tests or reproducible verification before they are accepted. When behavior changes, the team MUST confirm the scenario, confirm the expected result, and then implement the minimal fix. Regression testing is required for security checks, authorization rules, and user-isolation logic.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. Access Integrity and Least Privilege
+Authentication, authorization, and service checks MUST enforce user isolation. Any page, service, or data lookup that depends on user identity MUST verify that the current user has permission to view or modify the requested resource. IDOR prevention and role-based access checks are non-negotiable.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. Simplicity and Maintainability
+The codebase MUST favor clear names, explicit dependencies, and small focused components over hidden behavior or over-engineering. Shared logic MUST be organized into reusable services and data models with documentation sufficient for training usage. The system MUST remain approachable for learners.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+## Additional Constraints
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+ContosoDashboard is a training application and MUST remain offline-first, local-only, and intentionally limited. Production deployment patterns, cloud dependencies, and external identity services are not in scope unless explicitly labeled as future migration guidance. Mock authentication is allowed only for learning exercises and MUST NOT represent a production security model.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+The repository MUST keep the architecture understandable: Models, Data, Services, Pages, and Shared components remain distinct; business logic stays separate from UI concerns; and any infrastructure abstraction remains explicit and well documented.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+## Development Workflow
+
+All work MUST be driven by small, reviewable changes. Requirements and implementation decisions MUST be documented in the repository or feature artifacts before code is considered done. Pull requests MUST state the user value, affected area, and verification performed.
+
+For user-facing behavior and security-sensitive features, verification MUST include the relevant scenario and expected outcome. The team MUST use small iterative changes, validate each change, and avoid unreviewed shortcuts that bypass access controls or data isolation rules.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This Constitution supersedes informal practices and governs all project decisions. Any rule in this document takes precedence over convenience, speed, or demo-only shortcuts. A feature may not bypass an access rule, testing requirement, or ethical constraint simply because it is easier to ship.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+Amendments require a documented pull request that explains the reason for the change, identifies affected principles, and includes migration or compatibility notes if behavior changes. Reviews MUST confirm the amendment is consistent with this Constitution and does not weaken user safety, data boundaries, or training clarity.
+
+Versioning uses semantic versioning:
+- MAJOR: backward-incompatible removal or redefinition of a core principle or governance rule
+- MINOR: new principle or section added, or material expansion of a requirement
+- PATCH: wording, clarification, or non-semantic refinement
+
+Compliance review is required for all changes that touch security, authorization, workflow, or architecture. Reviewers MUST verify that the change preserves the intent of the affected principles and that the repository remains aligned with the training-only constraints of the project.
+
+**Version**: 1.0.0 | **Ratified**: 2026-09-15 | **Last Amended**: 2026-09-15
