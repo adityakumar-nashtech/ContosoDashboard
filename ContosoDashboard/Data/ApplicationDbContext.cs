@@ -11,6 +11,9 @@ public class ApplicationDbContext : DbContext
     }
 
     public DbSet<User> Users { get; set; } = null!;
+    public DbSet<Document> Documents { get; set; } = null!;
+    public DbSet<DocumentShare> DocumentShares { get; set; } = null!;
+    public DbSet<DocumentAudit> DocumentAudits { get; set; } = null!;
     public DbSet<TaskItem> Tasks { get; set; } = null!;
     public DbSet<Project> Projects { get; set; } = null!;
     public DbSet<TaskComment> TaskComments { get; set; } = null!;

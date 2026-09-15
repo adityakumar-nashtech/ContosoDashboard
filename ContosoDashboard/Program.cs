@@ -44,6 +44,17 @@ builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 
+// Document feature services (MVP)
+builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
+builder.Services.AddScoped<DocumentService>();
+
+// Register HttpClient for Blazor Server pages (use NavigationManager.BaseUri)
+builder.Services.AddScoped(sp =>
+{
+    var nav = sp.GetRequiredService<Microsoft.AspNetCore.Components.NavigationManager>();
+    return new System.Net.Http.HttpClient { BaseAddress = new Uri(nav.BaseUri) };
+});
+
 // Add HttpContextAccessor for accessing user claims
 builder.Services.AddHttpContextAccessor();
 
@@ -56,12 +67,15 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
-        context.Database.EnsureCreated(); // For development - use migrations in production
+        // Use migrations to evolve schema. EnsureCreated does not apply migrations
+        // and will not update an existing database. Call Migrate() so generated
+        // migrations are applied on startup when present.
+        context.Database.Migrate();
     }
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred creating the database.");
+        logger.LogError(ex, "An error occurred migrating the database.");
     }
 }
 

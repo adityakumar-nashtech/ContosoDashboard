@@ -1,0 +1,98 @@
+@page "/documents/upload"
+@using Microsoft.AspNetCore.Components.Forms
+@inject ContosoDashboard.Services.DocumentService DocumentService
+@inject Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider AuthStateProvider
+@inject Microsoft.AspNetCore.Components.NavigationManager Nav
+
+<h3>Upload Document</h3>
+
+<EditForm Model="this">
+    <InputFile OnChange="OnInputFileChange" />
+    <div class="mb-2">
+        <input placeholder="Title" @bind="Title" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <select @bind="Category" class="form-control">
+            <option value="Project Documents">Project Documents</option>
+            <option value="Team Resources">Team Resources</option>
+            <option value="Personal Files">Personal Files</option>
+            <option value="Reports">Reports</option>
+            <option value="Presentations">Presentations</option>
+            <option value="Other">Other</option>
+        </select>
+    </div>
+    <div class="mb-2">
+        <textarea placeholder="Description" @bind="Description" class="form-control"></textarea>
+    </div>
+    <button class="btn btn-primary" @onclick="UploadAsync" disabled="@(SelectedFile==null)">Upload</button>
+</EditForm>
+
+@if (FileSize.HasValue)
+{
+    <div class="mt-2">
+        <div class="progress">
+            <div class="progress-bar" role="progressbar" style="width:@(FileSize>0? (BytesUploaded*100.0/FileSize.Value):0)%" aria-valuenow="@(FileSize>0? (BytesUploaded*100/FileSize.Value):0)" aria-valuemin="0" aria-valuemax="100">@((int)(FileSize>0? (BytesUploaded*100.0/FileSize.Value):0))% </div>
+        </div>
+        <small>@BytesUploaded / @FileSize bytes</small>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(Message))
+{
+    <div class="alert alert-info mt-2">@Message</div>
+}
+
+@code {
+    private IBrowserFile? SelectedFile;
+    private string Title { get; set; } = string.Empty;
+    private string Category { get; set; } = "Project Documents";
+    private string Description { get; set; } = string.Empty;
+    private string Message { get; set; } = string.Empty;
+    private long BytesUploaded { get; set; }
+    private long? FileSize { get; set; }
+
+
+    private void OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        SelectedFile = e.File;
+    }
+
+    private async Task UploadAsync()
+    {
+        if (SelectedFile == null)
+        {
+            Message = "Select a file first.";
+            return;
+        }
+
+        try
+        {
+            var auth = await AuthStateProvider.GetAuthenticationStateAsync();
+            var user = auth.User;
+            var idClaim = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(idClaim, out var uploaderId))
+            {
+                Message = "Unable to determine uploader identity.";
+                return;
+            }
+
+            using var stream = SelectedFile.OpenReadStream(25 * 1024 * 1024);
+            FileSize = SelectedFile.Size;
+            BytesUploaded = 0;
+            var progress = new Progress<long>(b =>
+            {
+                BytesUploaded = b;
+                InvokeAsync(StateHasChanged);
+            });
+
+            var doc = await DocumentService.UploadDocumentAsync(stream, SelectedFile.Name, SelectedFile.ContentType, uploaderId, Title, Category, Description, null, progress);
+            Message = "Upload completed successfully.";
+            // Navigate to documents listing so user sees the new file
+            Nav.NavigateTo("/documents");
+        }
+        catch (Exception ex)
+        {
+            Message = "Upload error: " + ex.Message;
+        }
+    }
+}

@@ -1,0 +1,58 @@
+@page "/documents"
+@inject ContosoDashboard.Services.DocumentService DocumentService
+@inject Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider AuthStateProvider
+@using System.Collections.Generic
+@using System.Linq
+
+<h3>My Documents</h3>
+
+@if (items == null)
+{
+    <p>Loading documents...</p>
+}
+else if (!items.Any())
+{
+    <p>No documents found.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Uploaded</th>
+                <th>Size</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var d in items)
+            {
+                <tr>
+                    <td>@d.Title</td>
+                    <td>@d.Category</td>
+                    <td>@d.UploadDateUtc</td>
+                    <td>@d.FileSizeBytes</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<ContosoDashboard.Models.Document>? items;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var auth = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = auth.User;
+        var idClaim = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (!int.TryParse(idClaim, out var userId))
+        {
+            items = new List<ContosoDashboard.Models.Document>();
+            return;
+        }
+
+        items = DocumentService.GetDocumentsForUser(userId);
+    }
+}

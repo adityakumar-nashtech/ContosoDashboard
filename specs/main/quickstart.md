@@ -5,6 +5,16 @@
 - Local repository checked out
 - Optional: `dotnet-ef` tool installed for migrations (`dotnet tool install --global dotnet-ef`)
 
+### Create and apply EF Core migrations
+
+Run these commands from the repository root (install `dotnet-ef` if needed):
+
+```powershell
+dotnet tool install --global dotnet-ef --version 8.*
+dotnet ef migrations add AddDocumentEntities -p ContosoDashboard/ContosoDashboard.csproj -s ContosoDashboard/ContosoDashboard.csproj
+dotnet ef database update -p ContosoDashboard/ContosoDashboard.csproj -s ContosoDashboard/ContosoDashboard.csproj
+```
+
 ## Dev configuration (recommended)
 1. Add SQLite dev connection to `appsettings.Development.json`:
 
